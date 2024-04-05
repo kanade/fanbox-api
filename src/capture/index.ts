@@ -74,21 +74,17 @@ export async function get(type: keyof typeof ApiType): Promise<any> {
                 waitUntil: ['load', 'networkidle2'],
             })
         }
+        cookie.save(await page.cookies())
     } catch (e) {
         if (config.errorLog === 'true') {
             screenshot.save(await page.screenshot())
         }
         console.error(e)
-
+        throw e
+    } finally {
         await page.close()
         await browser.close()
-        
-        throw e
     }
-
-    cookie.save(await page.cookies())
-    await page.close()
-    await browser.close()
 
     return new Promise((resolve) => {
         setListener(resolve)
